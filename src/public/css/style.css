@@ -1,0 +1,15 @@
+body{
+    background: #dcdde1;
+}
+.navbar-brand img{
+    width: 50px;
+}
+.img{
+    text-align: center;
+    margin: 10px;
+    border: 2px #343a40 solid;
+}
+.img img{
+    max-width: 600px;
+    max-height: 600px;
+}

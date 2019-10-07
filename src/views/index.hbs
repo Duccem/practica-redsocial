@@ -1,0 +1,52 @@
+<div class="card">
+    <div class="card-header bg-dark">
+        <h3 class="card-title text-white">
+            <i class="far fa-image"></i> Upload a image
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="img" id="file-preview-zone" style="visibility: hidden">
+            
+        </div>
+        <form action="/images" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input accept="image/*"  type="file" name="image" id="image"  class="custom-file-input" id="inputGroup" aria-describedby="inputGroupFileAddon" required>
+                        <label class="custom-file-label" for="inputGroupFile">Choose Image</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="text" id="title" name="title" class="form-control" placeholder="Titulo de la imagen" id="">
+            </div>
+            <div class="form-group">
+                <textarea name="description" id="description" id="" cols="2" class="form-control" placeholder="Descripcion de la imagen"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success">
+                    <i class="fas fa-upload"></i> Upload Image
+                </button>
+                <a id="cancelar" onclick="cancelar(event)" class="btn btn-danger text-white" style="cursor: pointer">
+                    <i class="fas fa-ban"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card mt-3">
+    <div class="card-header bg-dark text-white">
+        <h3><i class="far fa-images"></i> Recent Uploads</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {{#each images}}
+                <div class="col-md-4">
+                    <a href="/images/{{uniqueId}}">
+                        <img title="{{title}}" src="/public/img/uploads/{{filename}}" alt="{{filename}}" class="w-100 h-100 img-thumbnail">
+                    </a>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
