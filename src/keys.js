@@ -1,6 +1,8 @@
+const dotenv = require('dotenv');
+dotenv.config();
 module.exports = {
     database:  {
-        URI: 'mongodb://localhost/redsocial',
+        URI: process.env.URI,
 
     }
 }
