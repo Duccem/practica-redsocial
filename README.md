@@ -1,2 +1,2 @@
 # practica-redsocial
-Practica de node aplicacion web red social usando mongodb y node
+Practica de NodeJS aplicacion web red social usando MongoDB y NodeJS, integrando el servicio de Cloudinary

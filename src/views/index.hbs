@@ -42,8 +42,8 @@
         <div class="row">
             {{#each images}}
                 <div class="col-md-4">
-                    <a href="/images/{{uniqueId}}">
-                        <img title="{{title}}" src="/public/img/uploads/{{filename}}" alt="{{filename}}" class="w-100 h-100 img-thumbnail">
+                    <a href="/images/{{public_id}}">
+                        <img title="{{title}}" src="{{path}}" alt="{{title}}" class="w-100 h-100 img-thumbnail">
                     </a>
                 </div>
             {{/each}}

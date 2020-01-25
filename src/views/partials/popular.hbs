@@ -6,8 +6,8 @@
         <div class="row">
             {{#each sidebar.popular}}
                  <div class="col-md-4">
-                     <a href="images/{{uniqueId}}">
-                         <img src="/public/img/uploads/{{filename}}" alt="{{filename}}" title="{{filename}}" class="w-100 h-100 image-thumbnail">
+                     <a href="images/{{public_id}}">
+                         <img src="{{path}}" alt="{{title}}" title="{{title}}" class="w-100 h-100 image-thumbnail">
                      </a>
                  </div>
             {{/each}}
