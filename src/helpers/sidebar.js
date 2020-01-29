@@ -1,17 +1,33 @@
-const Stats = require('./stats');
+const {imageStats,imageCounter} = require('./stats');
 const Images = require('./images');
 const Comments = require('./comments');
 
-module.exports = async  viewModel =>{
+async function SidebarData(viewModel){
     const result = await Promise.all([
-        Stats(),
         Images.popular(),
         Comments.newest()
     ]);
     viewModel.sidebar={
-        stats:result[0],
-        popular:result[1],
-        comments:result[2]
+        popular:result[0],
+        comments:result[1]
     };
     return viewModel;
+}
+
+async function userImageCounter(viewModel,user_id){
+    const result = await imageCounter(user_id);
+    viewModel.sidebar.userStats = result;
+    return viewModel;
+}
+
+async function imageStatsSideBar(viewModel,image_id){
+    const result = await imageStats(image_id);
+    viewModel.sidebar.stats = result;
+    return viewModel;
+}
+
+module.exports = {
+    imageStatsSideBar,
+    userImageCounter,
+    SidebarData
 }

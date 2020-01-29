@@ -6,21 +6,26 @@ function readFile(input) {
             var filePreview = document.createElement('img');
             filePreview.id = 'file-preview';
             filePreview.src = e.target.result;
+            if (window.location.href === '/signup') {
+                filePreview.style.height = '100px';
+                filePreview.style.width = '100px';
+            }
             var previewZone = document.getElementById('file-preview-zone');
-            if(previewZone.firstChild){
+            if (previewZone.firstChild) {
                 previewZone.removeChild(previewZone.firstChild);
             }
             previewZone.appendChild(filePreview);
+            previewZone.style.display = 'block';
             previewZone.style.visibility = 'visible';
         }
 
         reader.readAsDataURL(input.files[0]);
     }
 }
-function cancelar(e){
+function cancelar(e) {
     e.preventDefault();
     var previewZone = document.getElementById('file-preview-zone');
-    if(previewZone.firstChild){
+    if (previewZone.firstChild) {
         previewZone.removeChild(previewZone.firstChild);
     }
     previewZone.style.visibility = 'hidden';
@@ -29,41 +34,56 @@ function cancelar(e){
     var title = document.getElementById('title');
     title.value = '';
     var description = document.getElementById('description');
-    description.value='';
+    description.value = '';
 }
 var fileUpload = document.getElementById('image');
-if(fileUpload){
+if (fileUpload) {
     fileUpload.onchange = function (e) {
         readFile(e.srcElement);
     }
-} 
+}
 var btnLike = document.getElementById('btn-like');
-if(btnLike){
-    btnLike.onclick = function(e){
+if (btnLike) {
+    btnLike.onclick = function (e) {
         e.preventDefault();
         let imageId = this.dataset.id;
-        fetch(`/images/${imageId}/like`,{method:'POST'})
-            .then(async (response)=>{ 
+        fetch(`/images/${imageId}/like`, { method: 'POST' })
+            .then(async (response) => {
                 let likes = document.getElementById('likes-count');
-                res =await response.json();
-                likes.innerText=  res.likes;
+                let res = await response.json();
+                console.log(res);
+                console.log('hola');
+                let count = parseInt(likes.innerText);
+                likes.innerText = res.likes;
+                if (count < parseInt(res.likes)) {
+                    btnLike.innerHTML = '<i class="fa fa-thumbs-down"></i> Dislike';
+                    btnLike.classList.remove('btn-success');
+                    btnLike.classList.add('btn-info');
+                } else {
+                    btnLike.innerHTML = '<i class="fa fa-thumbs-up"></i> Like';
+                    btnLike.classList.remove('btn-info');
+                    btnLike.classList.add('btn-success');
+                }
+
+
+
             })
-            .catch(err=>console.log(err));
+            .catch(err => console.log(err));
     }
 }
 
 
 var btnDelete = document.getElementById('btn-delete');
-if(btnDelete){
-    btnDelete.onclick=function(e){
+if (btnDelete) {
+    btnDelete.onclick = function (e) {
         e.preventDefault();
         let res = confirm('Are you sure you want delete this image?');
-        if(res){
+        if (res) {
             let imageId = this.dataset.id;
-            fetch(`/images/${imageId}`,{method:'DELETE'})
-                .then(response=>response.json())
-                .then((data) =>{
-                    if(data.deleted){
+            fetch(`/images/${imageId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then((data) => {
+                    if (data.deleted) {
                         window.location = '/';
                     }
                 })
@@ -74,15 +94,34 @@ if(btnDelete){
 
 var btnCommentToggle = document.getElementById('btn-toggle-comment');
 
-if(btnCommentToggle){
-    btnCommentToggle.onclick = function(e){
+if (btnCommentToggle) {
+    btnCommentToggle.onclick = function (e) {
         e.preventDefault();
         let cajaComentarios = document.getElementById('post-comment');
-        if(cajaComentarios.style.display=='none'){
-            cajaComentarios.style.display='inherit'
-        }else{
-            cajaComentarios.style.display='none';
+        if (cajaComentarios.style.display == 'none') {
+            cajaComentarios.style.display = 'inherit'
+        } else {
+            cajaComentarios.style.display = 'none';
         }
     }
 }
 
+window.addEventListener('load', function () {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function (form) {
+        form.addEventListener('submit', function (event) {
+            if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+}, false);
+
+
+function navegar(public_id) {
+    window.location.href = '/images/' + public_id;
+}

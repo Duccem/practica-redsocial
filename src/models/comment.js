@@ -2,9 +2,8 @@ const {Schema,model} = require('mongoose');
 const {ObjectId} = Schema;
 
 const commentSchema = new Schema({
-    email:{type:String},
-    name:{type:String},
     comment:{type:String},
+    user:{type:ObjectId,ref:'User'},
     fecha_at:{type:Date,default:Date.now},
     image_id:{type:ObjectId}
 });

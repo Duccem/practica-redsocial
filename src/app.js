@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const exphbs = require('express-handlebars');
 const multer = require('multer');
+var cookieParser = require('cookie-parser');
 
 //modulos personales
 const routes = require('./routes');
@@ -32,10 +33,13 @@ const storage = multer.diskStorage({//manejador de archivos como imagenes
 
 //midlewares
 app.use('/public',express.static(path.join(__dirname,'./public')));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
+app.use('/user/signup',multer({storage}).single('image'));
 app.use('/images',multer({storage}).single('image'));
+
 
 //routes
 routes(app);

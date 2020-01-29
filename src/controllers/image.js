@@ -2,8 +2,9 @@ const fs = require('fs-extra');
 const cloudinary = require('cloudinary');
 const Image = require('../models/image');
 const Comment = require('../models/comment');
+const User = require('../models/user');
 const sidebar = require('../helpers/sidebar');
-const {cloudinar} = require('../keys');
+const { cloudinar } = require('../keys');
 const controller = {}
 
 cloudinary.config({
@@ -15,14 +16,24 @@ cloudinary.config({
 controller.index = async (req, res) => {
     let viewModel = { image: {}, comments: [] };
     const { image_id } = req.params;
-    const image = await Image.findOne({ public_id:  image_id  });
+    const image = await Image.findOne({ public_id: image_id }).populate('user');
+    const user = await User.findOne({_id:req.user_id});
     viewModel.image = image;
+    viewModel.user = user;
+    viewModel.like = false;
+    viewModel.delete = false;
     if (image) {
-        image.views = image.views + 1;
-        await image.save();
-        const comments = await Comment.find({ image_id: image._id }).sort({ fecha_at: -1 });
+        if (!image.views.includes(req.user_id)) {
+            await image.updateOne({ $push: { views: req.user_id } });
+            await image.save();
+        }
+        if (!image.likes.includes(req.user_id)) viewModel.like = true;
+        if (image.user._id == req.user_id) viewModel.delete = true;
+        const comments = await Comment.find({ image_id: image._id }).populate('user').sort({ fecha_at: -1 });
         viewModel.comments = comments;
-        viewModel = await sidebar(viewModel);
+
+        viewModel = await sidebar.SidebarData(viewModel);
+        viewModel = await sidebar.imageStatsSideBar(viewModel, image._id);
         res.render('image', viewModel);
     } else {
         res.redirect('/');
@@ -30,12 +41,14 @@ controller.index = async (req, res) => {
 
 };
 controller.create = async (req, res) => {
+    console.log(req);
     const { title, description } = req.body;
     const { path } = req.file;
     const { public_id, url } = await cloudinary.v2.uploader.upload(path);
     const newPost = new Image({
         title,
         description,
+        user: req.user_id,
         path: url,
         public_id
     });
@@ -44,20 +57,37 @@ controller.create = async (req, res) => {
     res.redirect(`/images/${newPost.public_id}`);
 };
 controller.like = async (req, res) => {
-    const { image_id } = req.params;
-    const image = await Image.findOne({ public_id: image_id });
-    if (image) {
-        image.likes = image.likes + 1;
-        await image.save();
-        res.json({ likes: image.likes });
+    try {
+        const { image_id } = req.params;
+        const image = await Image.findOne({ public_id: image_id });
+        let count =  image.likes.length;
+        if (image) {
+            if(image.likes.includes(req.user_id)){
+                await image.updateOne({ $pull: { likes: req.user_id } });
+                count--;
+            }else{ 
+                await image.updateOne({ $push: { likes: req.user_id } });
+                count++
+            }
+            await image.save();
+            res.json({ likes: count});
+        }
+    } catch (error) {
+        res.json({error:'Internal server error'});
+        console.log(error);
     }
 };
 controller.comment = async (req, res) => {
     const { image_id } = req.params;
-    const image = await Image.findOne({ public_id: image_id  });
+    const image = await Image.findOne({ public_id: image_id });
+    const user = await User.findOne({ _id: req.user_id });
     if (image) {
-        const comment = new Comment(req.body);
+        const comment = new Comment({
+            comment: req.body.comment,
+            user: req.user_id
+        });
         comment.image_id = image._id;
+        comment.name = user.username;
         await comment.save();
         res.redirect(`/images/${image.public_id}`);
     } else {

@@ -1,54 +1,54 @@
 const Comment = require('../models/comment');
 const Image = require('../models/image');
-async function imageCounter() {
-    return await Image.countDocuments();
+
+
+async function imageCounter(user_id) {
+    let images = await Image.find({user:user_id});
+    let likes = 0;
+    images.forEach((image) => likes = likes + image.likes.length);
+    return { count: images.length,likes:likes };
 }
 
-
-async function commentCounter() {
-    return await Comment.countDocuments();
+async function commentCounter(image_id) {
+    let comments = await Comment.find({image_id:image_id});
+    if(comments.length >  0){
+        return comments.length;
+    }
+    return 0;
 }
 
-
-async function imageTotalViewsCounter() {
-    const result = await Image.aggregate([{
-        $group: {
-            _id: '1',
-            viewsTotal: { $sum: '$views' }
-        }
-    }])
-    if(result.length >  0){
-        return result[0].viewsTotal
+async function imageTotalViewsCounter(image_id) {
+    const result = await Image.findOne({_id:image_id});
+    if(result.views.length >  0){
+        return result.views.length;
     }
     return 0;
 }
 
 
-async function imageTotalLikesCounter() {
-    const result = await Image.aggregate([{
-        $group: {
-            _id: '1',
-            likesTotal: { $sum: '$likes' }
-        }
-    }])
-    if(result.length >  0){
-        return result[0].likesTotal
+async function imageTotalLikesCounter(image_id) {
+    const result = await Image.findOne({_id:image_id});
+    if(result.likes.length >  0){
+        return result.likes.length;
     }
     return 0;
 }
 
-
-module.exports =  async () => {
+async function imageStats(image_id){
     const result = await Promise.all([
-        imageCounter(),
-        commentCounter(),
-        imageTotalViewsCounter(),
-        imageTotalLikesCounter()
+        commentCounter(image_id),
+        imageTotalViewsCounter(image_id),
+        imageTotalLikesCounter(image_id)
     ]);
     return {
-        images:result[0],
-        comments:result[1],
-        views:result[2],
-        likes:result[3]
+        comments:result[0],
+        views:result[1],
+        likes:result[2]
     }
+} 
+
+
+module.exports = {
+    imageStats,
+    imageCounter
 }
