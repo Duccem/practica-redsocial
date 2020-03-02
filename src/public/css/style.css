@@ -21,15 +21,20 @@ body{
 }
 
 .card-image-top{
- max-height: 250px;
- margin-left: 0;
- margin-right: 0em;
- cursor: pointer;
- transition: transform .7 ease !important;
+    max-height: 280px;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    cursor: pointer;
+    transition: transform .5s ease !important;
+    object-fit: cover;
+    object-position: center center;
 }
 .lista:hover img{
     transform: scale(1.3);
-    filter: brightness(1.3);
+    filter: contrast(1.1);
 }
 .img-container {
     text-align: center;
@@ -44,4 +49,16 @@ body{
     padding-right: 0;
     margin-right: 0;
     margin-left: 0 ;
+}
+
+.avatar-image{
+    margin: auto;
+    color: white;
+    padding: 0px 15px;
+    border: 1px solid #fff;
+    border-radius: 20px;
+    text-align: center;
+    background-color: #145da5;
+    cursor: pointer;
+    margin-top: 0;
 }

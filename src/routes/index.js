@@ -11,6 +11,8 @@ module.exports = app => {
     router.get('/images/:image_id',verify,image.index);
     router.get('/profile/:username',verify,user.profile);
     router.get('/logout',verify,home.logout);
+    router.get('/edit/:username',verify,user.edit);
+    router.post('/user/update',verify,user.update);
     router.post('/user/signup',user.signup);
     router.post('/user/login',user.signin);
     router.post('/images',verify,image.create);

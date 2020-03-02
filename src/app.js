@@ -37,6 +37,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
+app.use('/user/update',multer({storage}).single('image'));
 app.use('/user/signup',multer({storage}).single('image'));
 app.use('/images',multer({storage}).single('image'));
 
