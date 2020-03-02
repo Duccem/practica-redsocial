@@ -31,6 +31,7 @@ controller.signup = async (req, res) => {
 
 controller.signin = async (req, res) => {
     const user = await User.findOne({ username: req.body.username });
+    if(!user) return res.redirect('/login');
     const valid = await encript.validar(req.body.password, user.password);
     if (!valid) return res.redirect('/login');
     const token = jwt.sign({ id: user._id }, jsonwebtoken.key || "2423503", { expiresIn: 60 * 60 * 24 });
